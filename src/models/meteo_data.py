@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import DateTime, Float, ForeignKey, Uuid
+from sqlalchemy import DateTime, Float, ForeignKey, Uuid, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.models.base import Base
@@ -9,6 +9,9 @@ from src.models.base import Base
 
 class MeteoData(Base):
     __tablename__ = "meteo_data"
+    __table_args__ = (
+        UniqueConstraint("field_id", "date_time", name="uq_meteo_data_field_id_date_time"),
+    )
     
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
     field_id: Mapped[uuid.UUID] = mapped_column(Uuid, ForeignKey("fields.id"), index=True)

@@ -1,12 +1,11 @@
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 
 from pydantic import BaseModel
 
 
-class MeteoDataParseSchema(BaseModel):
-    date_time: int
-
+class MeteoDataTimelinePointSchema(BaseModel):
+    date_time: datetime
     temperature: float | None
     humidity: float | None
     wind_speed: float | None
@@ -19,12 +18,22 @@ class MeteoDataParseSchema(BaseModel):
     soil_moisture_1_to_3cm: float | None
     soil_moisture_3_to_9cm: float | None
     soil_moisture_9_to_27cm: float | None
-
     temperature_max: float | None
     temperature_min: float | None
-    sunrise: int | None
-    sunset: int | None
+    sunrise: datetime | None
+    sunset: datetime | None
     precipitation_sum: float | None
+
+
+class MeteoDataParseSchema(BaseModel):
+    current: MeteoDataTimelinePointSchema
+    timeline: list[MeteoDataTimelinePointSchema]
+
+
+class SunriseSunsetPointSchema(BaseModel):
+    day: date
+    sunrise: datetime | None
+    sunset: datetime | None
 
 
 class MeteoDataCreateSchema(BaseModel):
@@ -55,8 +64,15 @@ class MeteoDataReadSchema(MeteoDataCreateSchema):
     id: uuid.UUID
 
 
+class MeteoDataDashboardSchema(BaseModel):
+    current: MeteoDataReadSchema
+    timeline: list[MeteoDataReadSchema]
+
+
 class MeteoDataPreviewSchema(BaseModel):
     date_time: datetime
     temperature: float | None
     humidity: float | None
     wind_speed: float | None
+    sunrise: datetime | None = None
+    sunset: datetime | None = None

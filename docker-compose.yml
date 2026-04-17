@@ -45,5 +45,5 @@ volumes:
 
 networks:
   default:
-    external:
-      name: agronetwork
+    name: agronetwork
+    external: true
