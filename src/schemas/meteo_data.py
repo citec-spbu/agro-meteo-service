@@ -69,6 +69,13 @@ class MeteoDataDashboardSchema(BaseModel):
     timeline: list[MeteoDataReadSchema]
 
 
+class MeteoDataPeriodSchema(BaseModel):
+    field_id: uuid.UUID
+    start_date: date
+    end_date: date
+    timeline: list[MeteoDataReadSchema]
+
+
 class MeteoDataPreviewSchema(BaseModel):
     date_time: datetime
     temperature: float | None

@@ -11,6 +11,7 @@ def test_meteo_routes_are_registered() -> None:
     paths = {route.path for route in app.routes}
 
     assert "/api/meteo/{field_id}" in paths
+    assert "/api/meteo/{field_id}/period" in paths
     assert "/api/meteo/preview/{field_id}" in paths
     assert "/api/meteo/fields/{field_id}/contours/{contour_id}/preview" in paths
 

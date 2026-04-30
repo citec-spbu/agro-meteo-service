@@ -11,6 +11,7 @@ from src.repositories.uow.sqlalchemy_uow import SQLAlchemyUnitOfWork
 from src.schemas.contours import ContourCoordinateSchema
 from src.schemas.meteo_data import (
     MeteoDataDashboardSchema,
+    MeteoDataPeriodSchema,
     MeteoDataPreviewSchema,
     MeteoDataReadSchema,
 )
@@ -109,6 +110,37 @@ class MeteoDataService:
                     detail=f"Meteo data for field with id {field_id} not found.",
                 )
             return MeteoDataPreviewSchema.model_validate(res, from_attributes=True)
+
+    async def get_meteo_data_by_period(
+        self,
+        field_id: uuid.UUID,
+        start_date: date,
+        end_date: date,
+    ) -> MeteoDataPeriodSchema:
+        if start_date > end_date:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="start_date cannot be greater than end_date.",
+            )
+
+        start_datetime = datetime.combine(start_date, datetime.min.time())
+        end_datetime = datetime.combine(end_date, datetime.max.time())
+
+        async with self.__uow:
+            timeline = await self.__uow.meteo_data.read_between(
+                field_id=field_id,
+                start_datetime=start_datetime,
+                end_datetime=end_datetime,
+            )
+            return MeteoDataPeriodSchema(
+                field_id=field_id,
+                start_date=start_date,
+                end_date=end_date,
+                timeline=[
+                    MeteoDataReadSchema.model_validate(item, from_attributes=True)
+                    for item in timeline
+                ],
+            )
 
     async def get_current_meteo_data_preview_by_contour(
         self, field_id: uuid.UUID, contour_id: uuid.UUID

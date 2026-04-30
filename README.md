@@ -1,27 +1,27 @@
-# Meteo microservice
-Микровервис для работы с метео-данными в "Цифровом двойнике".
+# agro-meteo-service
 
-## Разработано с помощью:
+Микросервис метеоданных: хранение и выдача наблюдений/прогнозов для полей.
+
+## Стек
 - Python 3.11
 - FastAPI
-- PostgreSQL 
+- PostgreSQL
 - SQLAlchemy v2
-- Pydantic v2
-- AppScheduler
+- APScheduler
 
-## Сборка и запуск проекта:
-    git clone https://github.com/AgroScience-Team/meteo-service.git
+## Быстрый запуск
+```bash
+docker network create agronetwork 2>/dev/null || true
+docker compose up -d --build
+```
 
-Если не создана docker-сеть `agronetwork`, то:
+Сервис доступен на `http://localhost:8003`, Swagger - `http://localhost:8003/docs`.
+База данных доступна на `localhost:5436`.
 
-    docker create network agronetwork
+## Миграции
+```bash
+docker compose run --rm migrations
+```
 
-Выполнить миграции (при необходимости):
-
-    docker compose run migrations
-
-Из корневой папки проекта:
-
-    docker compose up -d 
-
-Swagger: `http://0.0.0.0:8003/docs`
+## Переменные окружения
+Конфигурация хранится в `.env` и подключается через `docker-compose.yml`.
